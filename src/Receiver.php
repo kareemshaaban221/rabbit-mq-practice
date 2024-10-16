@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\ExchangeType;
 use Closure;
 use Override;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -19,9 +20,9 @@ class Receiver extends Entity
     }
 
     #[Override]
-    public function declareQueue($queueName)
+    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false)
     {
-        parent::declareQueue($queueName);
+        parent::declareQueue($queueName, $bindWithDeclaredExchange);
         echo " [*] Waiting for messages From $queueName. To exit press CTRL+C\n";
     }
 

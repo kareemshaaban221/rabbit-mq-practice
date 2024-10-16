@@ -20,3 +20,13 @@ function config($key)
     }
     return $configs ?? null;
 }
+
+function last(array $arr)
+{
+    return $arr[array_key_last($arr)];
+}
+
+function first(array $arr)
+{
+    return $arr[array_key_first($arr)];
+}

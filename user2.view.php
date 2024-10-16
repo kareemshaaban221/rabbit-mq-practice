@@ -6,14 +6,14 @@
     <title>Chat | User 2</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-<body>
+<body class="bg-light">
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
-                    <h5>Chatbot [User: 2]</h5>
+                    <h5>Chatbox [User: 2]</h5>
                 </div>
                 <div class="card-body">
                     <div class="chat-box" style="height: 300px; overflow-y: auto;" id="chatBox">
@@ -45,7 +45,7 @@
 
         // TODO API request to send message to the sender of user2
         if (input.value.trim()) {
-            $.post('user2-input.php', { message: input.value.trim() }, function(response) {
+            $.post('exchange.php', { message: input.value.trim(), username: 'user2' }, function(response) {
                 console.log(response);
             });
         }
@@ -79,16 +79,14 @@
 
         // Subscribe to a queue (or a topic)
         client.subscribe('/queue/user2', (message) => {
-            console.log('Received message [2]: ' + message.body);
+            var data = JSON.parse(message.body);
+            console.log('Received message [' + data.username + ']: ' + data.message);
             // Display the message in the HTML
-            renderUserMessage(message.body);
-        });
-
-        // Subscribe to other users queue
-        client.subscribe('/queue/user1', (message) => {
-            console.log('Received message [1]: ' + message.body);
-            // Display the message in the HTML
-            renderOtherMessage(message.body);
+            if (data.username == 'user2') {
+                renderUserMessage(data.message);
+            } else {
+                renderOtherMessage(data.message);
+            }
         });
     }, (error) => {
         console.error('Error connecting to RabbitMQ: ' + error);

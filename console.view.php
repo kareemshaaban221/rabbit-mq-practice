@@ -10,8 +10,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 $receiver = new Receiver();
 
 // Declare a queue named 'hello'
-$receiver->declareQueue('user1');
-$receiver->declareQueue('user2');
+$receiver->declareQueue('console');
 
 // Declare a consumer on the queue
 $receiver->declareConsumer();

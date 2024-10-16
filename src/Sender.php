@@ -12,16 +12,35 @@ class Sender extends Entity
         $this->configs = config('queue.publish');
     }
 
-    public function publishMessage($messageBody, $exchangeName = '')
+    public function publishMessage($messageBody, array $messageProperties = [])
     {
-        foreach ($this->queues as $queueName) {
-            $message = new AMQPMessage($messageBody);
-            $this->channel->basic_publish(
-                $message,
-                $exchangeName,
-                $queueName
-            );
-            echo " [x] Sent To $queueName: '$messageBody'\n";
+        if (empty($this->exchangeName)) {
+            foreach ($this->queues as $queueName) {
+                $this->publishMessageToQueue($queueName, $messageBody, $messageProperties);
+            }
+        } else {
+            $this->publishMessageToExchange($this->exchangeName, $messageBody, $messageProperties);
         }
+    }
+
+    private function publishMessageToQueue($queueName, $messageBody, array $messageProperties = [])
+    {
+        $message = new AMQPMessage($messageBody, $messageProperties);
+        $this->channel->basic_publish(
+            $message,
+            '',
+            $queueName
+        );
+        echo " [x] Sent To $queueName: '$messageBody'\n";
+    }
+
+    private function publishMessageToExchange($exchangeName, $messageBody, array $messageProperties = [])
+    {
+        $message = new AMQPMessage($messageBody, $messageProperties);
+        $this->channel->basic_publish(
+            $message,
+            $exchangeName,
+        );
+        echo " [x] Sent To $exchangeName: '$messageBody'\n";
     }
 }

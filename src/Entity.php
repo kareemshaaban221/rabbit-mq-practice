@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\ExchangeType;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -32,6 +33,20 @@ abstract class Entity
      * @var array
      */
     protected array $queues = [];
+
+    /**
+     * Name of the exchange
+     *
+     * @var string
+     */
+    protected string $exchangeName;
+
+    /**
+     * Type of the exchange
+     *
+     * @var ExchangeType
+     */
+    protected ExchangeType $exchangeType;
 
     /**
      * Configuration for queue declaration
@@ -67,13 +82,37 @@ abstract class Entity
      *
      * @return void
      */
-    public function declareQueue($queueName)
+    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false)
     {
         // Declare a queue with the given name and configuration
         $this->channel->queue_declare($queueName, ...$this->configs);
 
+        if ($bindWithDeclaredExchange) {
+            $this->channel->queue_bind($queueName, $this->exchangeName);
+        }
+
         // Set the queue name
         $this->queues[] = $queueName;
+    }
+
+    /**
+     * Declare an exchange
+     *
+     * @param string $exchangeName
+     * @param ExchangeType $exchangeType
+     *
+     * @return void
+     */
+    public function declareExchange($exchangeName, ExchangeType $exchangeType)
+    {
+        // Declare an exchange with the given name and type
+        $this->channel->exchange_declare($exchangeName, $exchangeType->value, ...config('queue.exchange'));
+        
+        // Set the exchange name
+        $this->exchangeName = $exchangeName;
+
+        // Set the exchange type
+        $this->exchangeType = $exchangeType;
     }
 
     /**

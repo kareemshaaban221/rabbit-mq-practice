@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'exchange' => [
+        'passive' => false,
+        'durable' => true,
+        'auto_delete' => false,
+    ],
     'publish' => [
         'passive' => false,
         'durable' => true,
