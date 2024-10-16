@@ -9,7 +9,7 @@ return [
     ],
     'consume' => [
         'no_local' => false,
-        'no_ack' => true,
+        'no_ack' => false, // false: message should be acknowledged by the consumer
         'exclusive' => false,
         'nowait' => false,
     ],

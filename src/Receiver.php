@@ -4,6 +4,7 @@ namespace App;
 
 use Closure;
 use Override;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Receiver extends Entity
 {
@@ -32,8 +33,13 @@ class Receiver extends Entity
     }
 
     protected function getCallback(): Closure {
-        return function ($msg) {
-            echo ' [x] Received ', $msg->body, "\n";
+        return function (AMQPMessage $msg) {
+            // '.' is the number of seconds this message take to be received
+            // hack the sleep to make it more realistic as it's a heavy task
+            sleep(substr_count($msg->getBody(), '.'));
+            echo ' [x] Received ', $msg->getBody(), "\n";
+            // acknowledge the message
+            $msg->ack();
         };
     }
 
