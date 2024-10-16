@@ -3,9 +3,9 @@
 return [
     'publish' => [
         'passive' => false,
-        'durable' => false,
+        'durable' => true,
         'exclusive' => false,
-        'auto_delete' => true
+        'auto_delete' => false
     ],
     'consume' => [
         'no_local' => false,
