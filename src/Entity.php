@@ -29,9 +29,9 @@ abstract class Entity
     /**
      * Name of the queue
      *
-     * @var string
+     * @var array
      */
-    protected string $queueName;
+    protected array $queues = [];
 
     /**
      * Configuration for queue declaration
@@ -73,7 +73,7 @@ abstract class Entity
         $this->channel->queue_declare($queueName, ...$this->configs);
 
         // Set the queue name
-        $this->queueName = $queueName;
+        $this->queues[] = $queueName;
     }
 
     /**

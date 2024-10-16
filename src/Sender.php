@@ -14,12 +14,14 @@ class Sender extends Entity
 
     public function publishMessage($messageBody, $exchangeName = '')
     {
-        $message = new AMQPMessage($messageBody);
-        $this->channel->basic_publish(
-            $message,
-            $exchangeName,
-            $this->queueName
-        );
-        echo " [x] Sent '$messageBody'\n";
+        foreach ($this->queues as $queueName) {
+            $message = new AMQPMessage($messageBody);
+            $this->channel->basic_publish(
+                $message,
+                $exchangeName,
+                $queueName
+            );
+            echo " [x] Sent To $queueName: '$messageBody'\n";
+        }
     }
 }
