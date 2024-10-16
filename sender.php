@@ -12,5 +12,5 @@ echo "\033[33mPress Ctrl+C to exit.\033[0m\n";
 while (true) {
     echo "Enter message: ";
     $message = fgets(STDIN);
-    $sender->publishMessage($message);
+    $sender->publishMessage(trim($message));
 }
