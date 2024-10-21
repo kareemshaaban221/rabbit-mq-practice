@@ -82,13 +82,13 @@ abstract class Entity
      *
      * @return void
      */
-    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false)
+    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false, string $bindingKey = '')
     {
         // Declare a queue with the given name and configuration
         $this->channel->queue_declare($queueName, ...$this->configs);
 
         if ($bindWithDeclaredExchange) {
-            $this->channel->queue_bind($queueName, $this->exchangeName);
+            $this->channel->queue_bind($queueName, $this->exchangeName, $bindingKey);
         }
 
         // Set the queue name

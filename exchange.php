@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ExchangeType;
 use App\Sender;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -23,8 +24,9 @@ $response = [
 ];
 
 $sender = new Sender();
-$sender->declareQueue('user1');
-$sender->declareQueue('user2');
-$sender->declareQueue('console');
+$sender->declareExchange('chat', ExchangeType::DIRECT);
+$sender->declareQueue('user1', true, 'group');
+$sender->declareQueue('user2', true, 'group');
+$sender->declareQueue('console', true, 'group');
 
-$sender->publishMessage(json_encode($response));
+$sender->publishMessage(json_encode($response), 'group');

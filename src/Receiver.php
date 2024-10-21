@@ -20,9 +20,9 @@ class Receiver extends Entity
     }
 
     #[Override]
-    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false)
+    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false, string $bindingKey = '')
     {
-        parent::declareQueue($queueName, $bindWithDeclaredExchange);
+        parent::declareQueue($queueName, $bindWithDeclaredExchange, $bindingKey);
         echo " [*] Waiting for messages From $queueName. To exit press CTRL+C\n";
     }
 
@@ -70,7 +70,7 @@ class Receiver extends Entity
             // '.' is the number of seconds this message take to be received
             // hack the sleep to make it more realistic as it's a heavy task
             sleep(substr_count($msg->getBody(), '.'));
-            echo " [x] Received From $queueName: {$msg->getBody()}\n";
+            echo " [x] Received From {$msg->getRoutingKey()}: {$msg->getBody()}\n";
             // acknowledge the message
             $msg->ack();
         };

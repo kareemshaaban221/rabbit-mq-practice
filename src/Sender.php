@@ -12,14 +12,14 @@ class Sender extends Entity
         $this->configs = config('queue.publish');
     }
 
-    public function publishMessage($messageBody, array $messageProperties = [])
+    public function publishMessage($messageBody, string $routingKey = '', array $messageProperties = [])
     {
         if (empty($this->exchangeName)) {
             foreach ($this->queues as $queueName) {
                 $this->publishMessageToQueue($queueName, $messageBody, $messageProperties);
             }
         } else {
-            $this->publishMessageToExchange($this->exchangeName, $messageBody, $messageProperties);
+            $this->publishMessageToExchange($this->exchangeName, $messageBody, $routingKey, $messageProperties);
         }
     }
 
@@ -34,13 +34,14 @@ class Sender extends Entity
         echo " [x] Sent To $queueName: '$messageBody'\n";
     }
 
-    private function publishMessageToExchange($exchangeName, $messageBody, array $messageProperties = [])
+    private function publishMessageToExchange($exchangeName, $messageBody, string $routingKey = '', array $messageProperties = [])
     {
         $message = new AMQPMessage($messageBody, $messageProperties);
         $this->channel->basic_publish(
             $message,
             $exchangeName,
+            $routingKey,
         );
-        echo " [x] Sent To $exchangeName: '$messageBody'\n";
+        echo " [x] Sent To $exchangeName Within [" . (empty($routingKey) ? 'Default Route' : $routingKey) . "]: '$messageBody'\n";
     }
 }
