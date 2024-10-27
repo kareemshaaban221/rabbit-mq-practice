@@ -15,9 +15,9 @@ $receiver = new Receiver();
 // we don't need to bind the queue with an exchange because it already done by the exchange.php file
 // when the message sent from the user to the exchange
 // *
-// $receiver->declareExchange('chat', ExchangeType::DIRECT);
-// $receiver->declareQueue('console', true, 'ungroup');
-$receiver->declareQueue('console');
+$receiver->declareExchange('chat', ExchangeType::TOPIC);
+$receiver->declareQueue('console', true, 'console.#');
+// $receiver->declareQueue('console');
 
 // Declare a consumer on the queue
 $receiver->declareConsumer();
