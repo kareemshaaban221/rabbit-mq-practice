@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\ExchangeType;
+use Closure;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -56,6 +57,25 @@ abstract class Entity
     protected array $configs;
 
     /**
+     * Configuration for queue consumer
+     * 
+     * @var array
+     */
+    protected array $consumerConfigs;
+
+    /**
+     * Callback for consuming messages
+     *
+     * @var Closure|array
+     */
+    protected Closure|array $callback;
+
+    /**
+     * @var string
+     */
+    public string $currentQueueName;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -68,12 +88,22 @@ abstract class Entity
 
         // Set configurations for queue declaration
         $this->setConfigs();
+        $this->setConsumerConfigs();
     }
 
     /**
      * Set configurations for queue declaration
      */
-    protected abstract function setConfigs();
+    protected function setConfigs() {
+        $this->configs = config('queue.publish');
+    }
+
+    /**
+     * Set configurations for queue consumer
+     */
+    protected function setConsumerConfigs() {
+        $this->consumerConfigs = config('queue.consume');
+    }
 
     /**
      * Declare a queue
@@ -92,7 +122,8 @@ abstract class Entity
         }
 
         // Set the queue name
-        $this->queues[] = $queueName;
+        $this->currentQueueName = $queueName;
+        $this->queues[]         = $queueName;
     }
 
     /**

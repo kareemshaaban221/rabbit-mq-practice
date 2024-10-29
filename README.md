@@ -1,60 +1,70 @@
-# Chat Application Using RabbitMQ
-- This app is a real-time chat with only two users that use the RabbitMQ as its server.
-- I use PHP for practicing reasons but this app can be implemented by only the front-end because our backend here the RabbitMQ itself
+# RPC Client-Server using RabbitMQ
 
-# Prerequisites
-1. Should Have PHP
-2. Install Erlang Guide [Here](https://www.rabbitmq.com/docs/which-erlang)
-3. Install RabbitMQ Service Installer [Here](https://www.rabbitmq.com/docs/install-windows#downloads)
+This project is a simple implementation of an RPC (Remote Procedure Call) client-server architecture using RabbitMQ. It demonstrates how to execute remote procedures and handle responses asynchronously over RabbitMQ.
 
-# Runing the app
-1. Install dependencies using composer
-    - autoload files map them with namespaces
-    - `"php-amqplib/php-amqplib"`
-```
-composer install
-```
-2. Run PHP server in the working directory
-```
-php -S localhost:8080
-```
+## Prerequisites
 
-# App UI
-![UI Image](github/assets/image.png)
+- PHP 7.4 or later
+- Composer
+- RabbitMQ server
 
-# Testing
-- Test RabbitMQ
-```
-C:\Program Files\RabbitMQ Server\rabbitmq_server-4.0.2\sbin>rabbitmqctl.bat status
-C:\Program Files\RabbitMQ Server\rabbitmq_server-4.0.2\sbin>ping kareem
-```
-- Test the application
-    - Open two browsers and navigate to `http://localhost:8080/user1.view.php` and `http://localhost:8080/user2.view.php`
-    - Open a terminal window and run the `console.view.php` file
+## Installation
+
+1. Clone the repository:
+
+    ```sh
+    git clone <repository-url>
+    cd <repository-directory>
     ```
-    php console.view.php
+
+2. Install the dependencies using Composer:
+
+    ```sh
+    composer install
     ```
-    - Send messages from each user and check if the other user receives the messages
-    - Messages should be received by the console as well
 
-## BUG that I faced today 16/10/2024
+3. Configure RabbitMQ by setting up the appropriate queues and exchanges as defined in the `config` directory.
 
-- I got [2 queues] => `user1`, `user2`
-    - `user1.view.php`    ===> consumes the two queues [ and this is my mistake ]
-    - `user2.view.php`    ===> consumes the two queues [ and this is my mistake ]
-    - `console.view.php`  ===> consumes the two queues [ and this is my mistake ]
-- Every file of them should have their queue separate from others
-    - `user1.view.php`    ===> consumes `user1` queue [ correct ]
-    - `user2.view.php`    ===> consumes `user2` queue [ correct ]
-    - `console.view.php`  ===> consumes `console` queue [ another queue ]
-- In the `exchange.php` - I made a declaration for both queues and publish the messages to them
+## Usage
 
-## In the previous approach:
-- We need to define a queue for each new consumer
-- For example - I decide to extend my consumers and make a new consumer called `console`
-- To make this consumer, I declared a new queue called console in the `exchange.php` and `console.view.php`
-- I made this to make the console [my new consumer] listen from exchanging as well
+### Running the Server
 
+To start the RPC server, run the following command:
 
+```sh
+php rpc_server.php
+```
 
+The server will listen for incoming RPC requests and handle them according to the available services.
+
+### Running the Client
+
+To make an RPC call from the client, run the following command:
+
+```sh
+php rpc_client.php
+```
+
+The client will send a request to the server and display the result once it receives a response.
+
+## Configuration
+
+The configuration files are located in the `config` directory. They allow you to set up:
+
+- Default queue names
+- Namespace for services
+- List of available services
+
+Modify these files to suit your environment and requirements.
+
+## Services
+
+The project includes example services located in the `src/Services/Rpc` directory:
+
+- `Arithmetic`: Provides arithmetic operations such as sum and factorial.
+- `TimeConsuming`: Provides operations that simulate time-consuming tasks.
+
+## Extending the Project
+
+To add new services, create a new class in the `src/Services/Rpc` directory and update the `config/rpc.php` file to include the new service.
 
