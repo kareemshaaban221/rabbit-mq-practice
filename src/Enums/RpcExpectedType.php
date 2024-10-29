@@ -11,4 +11,14 @@ enum RpcExpectedType: string
     case OBJECT = 'object';
     case NULL = 'null';
     case VOID = 'void';
+
+    public static function find(string $value): ?RpcExpectedType
+    {
+        try {
+            return static::from($value);
+        } catch (\ValueError|\TypeError $e) {
+            echo "[RpcServerError] Type [$value] is not supported type";
+            exit(1);
+        }
+    }
 }

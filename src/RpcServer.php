@@ -105,7 +105,13 @@ class RpcServer extends Entity implements IPublisher, ISubscriber
             $args = [];
             foreach ($methods as $method) {
                 $reflection = new \ReflectionMethod($service, $method);
-                $args[$method] = $reflection->getParameters();
+                $curr = [];
+                foreach ($reflection->getParameters() as $parameter) {
+                    $name = $parameter->name;
+                    $type = (string) $parameter->getType();
+                    $curr[] = compact('name', 'type');
+                }
+                $args[$method] = $curr;
             }
             $services[$key] = $args;
         }

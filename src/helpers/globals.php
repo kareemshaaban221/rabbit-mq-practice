@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\IRenderable;
 use phpseclib3\Exception\FileNotFoundException;
 
 function config($key)
@@ -29,4 +30,9 @@ function last(array $arr)
 function first(array $arr)
 {
     return $arr[array_key_first($arr)];
+}
+
+function render(IRenderable $renderable)
+{
+    echo $renderable->render();
 }

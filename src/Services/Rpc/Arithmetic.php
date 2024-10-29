@@ -8,7 +8,7 @@ use App\Services\Rpc\Abstracts\RpcService;
 class Arithmetic extends RpcService
 {
 
-    public static function sum(int ...$numbers): int
+    public static function sum(array $numbers): int
     {
         static::setLastMethodReturnExceptedType(RpcExpectedType::NUMBER);
         return array_sum($numbers);
@@ -22,5 +22,14 @@ class Arithmetic extends RpcService
         }
         static::setLastMethodReturnExceptedType(RpcExpectedType::NUMBER);
         return $result;
+    }
+
+    public static function fib(int $n): int  
+    {
+        static::setLastMethodReturnExceptedType(RpcExpectedType::NUMBER);
+        if ($n <= 1) {
+            return $n;
+        }
+        return self::fib($n - 1) + self::fib($n - 2);
     }
 }

@@ -9,6 +9,6 @@ return [
 
     'services' => [
         'arithmetic' => Arithmetic::class,
-        'timeConsuming' => TimeConsuming::class
+        'timeConsuming' => TimeConsuming::class,
     ]
 ];
