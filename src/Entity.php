@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Entity.php
+ * Abstract class for RabbitMQ entities
+ *
+ * @author  Kareem Mohamed <kareemshaaban221@gmail.com>
+ */
+
 namespace App;
 
 use App\Enums\ExchangeType;
@@ -10,6 +17,9 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 /**
  * Abstract class for RabbitMQ entities
+ *
+ * @category RabbitMQ
+ * @package  App
  */
 abstract class Entity
 {
@@ -29,21 +39,21 @@ abstract class Entity
     protected AMQPChannel $channel;
 
     /**
-     * Name of the queue
+     * List of declared queues
      *
      * @var array
      */
-    protected array $queues = [];
+    protected array $queues;
 
     /**
-     * Name of the exchange
+     * Name of the declared exchange
      *
      * @var string
      */
     protected string $exchangeName;
 
     /**
-     * Type of the exchange
+     * Type of the declared exchange
      *
      * @var ExchangeType
      */
@@ -71,6 +81,8 @@ abstract class Entity
     protected Closure|array $callback;
 
     /**
+     * Currently declared queue name
+     *
      * @var string
      */
     public string $currentQueueName;
@@ -93,15 +105,21 @@ abstract class Entity
 
     /**
      * Set configurations for queue declaration
+     *
+     * @return void
      */
-    protected function setConfigs() {
+    protected function setConfigs(): void
+    {
         $this->configs = config('queue.publish');
     }
 
     /**
      * Set configurations for queue consumer
+     *
+     * @return void
      */
-    protected function setConsumerConfigs() {
+    protected function setConsumerConfigs(): void
+    {
         $this->consumerConfigs = config('queue.consume');
     }
 
@@ -109,10 +127,12 @@ abstract class Entity
      * Declare a queue
      *
      * @param string $queueName
+     * @param bool $bindWithDeclaredExchange
+     * @param string $bindingKey
      *
      * @return void
      */
-    public function declareQueue($queueName, bool $bindWithDeclaredExchange = false, string $bindingKey = '')
+    public function declareQueue(string $queueName, bool $bindWithDeclaredExchange = false, string $bindingKey = ''): void
     {
         // Declare a queue with the given name and configuration
         $this->channel->queue_declare($queueName, ...$this->configs);
@@ -123,7 +143,7 @@ abstract class Entity
 
         // Set the queue name
         $this->currentQueueName = $queueName;
-        $this->queues[]         = $queueName;
+        $this->queues[] = $queueName;
     }
 
     /**
@@ -134,7 +154,7 @@ abstract class Entity
      *
      * @return void
      */
-    public function declareExchange($exchangeName, ExchangeType $exchangeType)
+    public function declareExchange(string $exchangeName, ExchangeType $exchangeType): void
     {
         // Declare an exchange with the given name and type
         $this->channel->exchange_declare($exchangeName, $exchangeType->value, ...config('queue.exchange'));
@@ -158,3 +178,4 @@ abstract class Entity
         $this->connection->close();
     }
 }
+
